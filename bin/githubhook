@@ -49,6 +49,8 @@ github.listen();
 github.on(options['<trigger>'], function () {
   var scriptPath = path.resolve(options['<script>']);
 
+  process.env.GITHUBHOOK_REPO_REF = options['<trigger>'];
+
   child_process.execFile(scriptPath, function(err, stdout, stderr) {
     if (options['--verbose']) {
       console.log('--> EXEC ' + scriptPath);
