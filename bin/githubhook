@@ -46,24 +46,47 @@ var github = githubhook({
 github.listen();
 
 // trigger
-github.on(options['<trigger>'], function () {
-  var scriptPath = path.resolve(options['<script>']);
+if (options['<trigger>'] === 'push') {
+  github.on(options['<trigger>'], function (repo, ref) {
+    var scriptPath = path.resolve(options['<script>']);
 
-  process.env.GITHUBHOOK_REPO_REF = options['<trigger>'];
+    process.env.GITHUBHOOK_REPO_REF = repo + ':' + ref;
 
-  child_process.execFile(scriptPath, function(err, stdout, stderr) {
-    if (options['--verbose']) {
-      console.log('--> EXEC ' + scriptPath);
+    child_process.execFile(scriptPath, function(err, stdout, stderr) {
+      if (options['--verbose']) {
+        console.log('--> EXEC ' + scriptPath);
 
-      if (err) {
-        console.error(err.stack);
-      } else {
-        console.error(stderr);
-        console.log(stdout);
+        if (err) {
+          console.error(err.stack);
+        } else {
+          console.error(stderr);
+          console.log(stdout);
+        }
+
+        console.log('--- END ' + scriptPath);
       }
-
-      console.log('--- END ' + scriptPath);
-    }
+    });
   });
-});
+} else {
+  github.on(options['<trigger>'], function () {
+    var scriptPath = path.resolve(options['<script>']);
+
+    process.env.GITHUBHOOK_REPO_REF = options['<trigger>'];
+
+    child_process.execFile(scriptPath, function(err, stdout, stderr) {
+      if (options['--verbose']) {
+        console.log('--> EXEC ' + scriptPath);
+
+        if (err) {
+          console.error(err.stack);
+        } else {
+          console.error(stderr);
+          console.log(stdout);
+        }
+
+        console.log('--- END ' + scriptPath);
+      }
+    });
+  });
+}
 
