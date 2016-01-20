@@ -46,6 +46,9 @@ var github = githubhook({
 github.listen();
 
 // trigger
+if (options['--verbose']) {
+  console.log('trigger: \'' + options['<trigger>'] + '\'');
+}
 if (options['<trigger>'] === 'push') {
   github.on(options['<trigger>'], function (repo, ref) {
     var scriptPath = path.resolve(options['<script>']);
